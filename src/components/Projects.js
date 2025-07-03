@@ -5,7 +5,7 @@ import projImg5 from "../assets/img/CleanShot 2023-03-13 at 21.55.53@2x.png";
 import projImg7 from "../assets/img/project-img8.png";
 import TrackVisibility from "react-on-screen";
 import ifip from "../assets/img/ifipsec2024.pdf";
-import ifipScreenshot from "../assets/img/ifipScreenshot@2x.png"
+import ifipScreenshot from "../assets/img/ifipScreenshot@2x.png";
 
 export const Projects = () => {
     const projects = [
@@ -28,15 +28,15 @@ export const Projects = () => {
                 "Swift iOS application that recommends users albums based on their vinyl collection. The app uses NSPersistentCloudKitContainer with the goal of providing applications accross Apple's ecosystem.",
             imgUrl: projImg7,
             page: "https://github.com/pdj1183/Records-Recommendations/wiki",
-        }
+        },
     ];
 
     const ifipCard = {
         title: "Exploring a Low-Cost Hardware Reverse Engineering Approach: A Use Case Experiment",
         description: "IFIPSEC",
         imgUrl: ifipScreenshot,
-        page: "https://link.springer.com/chapter/10.1007/978-3-031-65175-5_31"
-    }
+        page: "https://link.springer.com/chapter/10.1007/978-3-031-65175-5_31",
+    };
 
     return (
         <div>
@@ -52,17 +52,32 @@ export const Projects = () => {
                                                 ? "animate__animated animate__fadeIn"
                                                 : ""
                                         }>
-                                        <h2 className="text-center">Hardware Reverse Engineering Research</h2>
+                                        <h2 className="text-center">
+                                            Hardware Reverse Engineering
+                                            Research
+                                        </h2>
                                         <p className="text-center">
-                                            I spent my last year working on Hardware Reverse Engineering in a low cost lab. 
-                                            Our goal was to research how novice reverse engineers would be able to attack an IoT smart sensing device.
-                                            I lead an effort to understand and analyze possible vulnerabilities of our blackbox sensing device and after creating a possible attack,
-                                            tested the validity of an operating battery voltage test.
-                                            We found that as novice reverse engineers with a low cost lab, we successfully designed an attack that meaningfully affected the trustworthiness of our blackbox device. 
-                                            
+                                            I spent my last year working on
+                                            Hardware Reverse Engineering in a
+                                            low cost lab. Our goal was to
+                                            research how novice reverse
+                                            engineers would be able to attack an
+                                            IoT smart sensing device. I lead an
+                                            effort to understand and analyze
+                                            possible vulnerabilities of our
+                                            blackbox sensing device and after
+                                            creating a possible attack, tested
+                                            the validity of an operating battery
+                                            voltage test. We found that as
+                                            novice reverse engineers with a low
+                                            cost lab, we successfully designed
+                                            an attack that meaningfully affected
+                                            the trustworthiness of our blackbox
+                                            device.
                                         </p>
                                         <Row className="justify-content-center">
-                                            <ProjectCard {...ifipCard}></ProjectCard>
+                                            <ProjectCard
+                                                {...ifipCard}></ProjectCard>
                                         </Row>
                                     </div>
                                 )}
@@ -84,13 +99,59 @@ export const Projects = () => {
                                                 ? "animate__animated animate__fadeIn"
                                                 : ""
                                         }>
-                                        <h2 className="text-center">Software Engineeering Projects</h2>
+                                        <h2 className="text-center">
+                                            Software Engineeering Projects
+                                        </h2>
                                         <p className="text-center">
-                                            
-                                            Throughout my time at CSU I took part in several group software engineering projects, 
-                                            these inspired me to start my own projects using technologies I was curious about.
-                                            These projects allowed me to put my creative spin into coding projects!
+                                            Throughout my time at CSU I took
+                                            part in several group software
+                                            engineering projects, these inspired
+                                            me to start my own projects using
+                                            technologies I was curious about.
+                                            These projects allowed me to put my
+                                            creative spin into coding projects!
                                         </p>
+                                        <Row>
+                                            <Col>
+                                                <a
+                                                    href={
+                                                        "https://github.com/pdj1183/LoRa-Dashboard"
+                                                    }
+                                                    target={"_blank"}>
+                                                    <div className="proj-imgbx">
+                                                        <video
+                                                            className="loraVideo"
+                                                            controls
+                                                            muted
+                                                            src="https://github.com/user-attachments/assets/97756a8a-2db8-45b8-b298-19100d9e1012"
+                                                        />
+                                                        <div className="proj-txtx">
+                                                            <h4>
+                                                                LoRa Dashboard
+                                                            </h4>
+                                                            <span>
+                                                                A full stack IoT
+                                                                sensor project
+                                                                with ESP32
+                                                                firmware,
+                                                                FastAPI backend,
+                                                                and a simple
+                                                                frontend Webapp.
+                                                                The IoT device
+                                                                communicates
+                                                                through MQTT and
+                                                                the frontend
+                                                                fetches
+                                                                historical data
+                                                                and connects to
+                                                                a WebSocket for
+                                                                live updates.
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </Col>{" "}
+                                        </Row>
                                         <Row>
                                             {projects.map((project, index) => {
                                                 return (
