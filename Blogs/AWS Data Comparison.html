@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>AWS Data Comparison</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">AWS Data Comparison</h1>
+</header>
+<p>11-27-2023 14:14 *** # Motivation For all of our previous tests where
+we have wanted to record the values that the <a href="SAADC" class="wikilink">SAADC</a> outputs while experimenting with the Battery
+Voltage we have used an <a href="nrf9160 Recreation" class="wikilink">AWS Terminal</a> application. It uses LTE to send the
+values that the <a href="SAADC" class="wikilink">SAADC</a> using the <a href="MQTT" class="wikilink">MQTT</a> protocol. This application uses
+the same process to measure the signal voltage as the <a href="ADC Terminal" class="wikilink">ADC Terminal</a> application. In
+AWS I have created DynamoDB databases to store the data from the <a href="nRF9160dk" class="wikilink">nRF9160dk</a>. I also use message
+routing rules to transfer the messages from <a href="MQTT" class="wikilink">MQTT</a> to the DynamoDB tables.</p>
+<p>We wanted to confirm that the data sent out by the <a href="nRF9160dk" class="wikilink">nRF9160dk</a> was not being modified
+or manipulated by AWS so we needed a way to save the application output.
+We decided to used the default Serial Wire Debug(SWD) GPIO pin interface
+along with a signal analyzer to record the data sent out by the <a href="nRF9160dk" class="wikilink">nRF9160dk</a>. The <a href="nrf9160 Recreation" class="wikilink">AWS Terminal</a> logs the
+message that will be sent to AWS, meaning that the data will be encoded
+in the SWD. The signal analyzer was necessary to decode the SWD protocol
+data into plaintext. With these two sources we would be able to compare
+what was recoded and determine if there was any manipulation or
+modification in AWS # Test For this test we would use the <a href="Saleae" class="wikilink">Saleae Logic 4</a> analyzer along with
+the Logic 2 desktop application to record the SWD and decode it into
+plain text. We would run a shorter version of our ADC Battery Test. We
+used three Battery Voltages: 3.5V, 3.6V, 3.7V and three weights: 100g,
+200g, 340g. The entire device would be powered on for 5 minutes. The <a href="Saleae" class="wikilink">Saleae Logic 4</a> analyzer was connected
+to P0.28(TX) and P0.29(RX) as well as ground on the <a href="nRF9160dk" class="wikilink">nRF9160dk</a>. I then configured the analyzer in the
+Logic 2 software with the Async Serial Analyzer with input 1 and 2 to
+match the P0.28(TX) and P0.29(RX). <img role="img" aria-label="AsyncSerial.png" src="AsyncSerial.png" class="wikilink" alt="AsyncSerial.png" /> After running the test I would
+save the Logic 2 capture so we could reference it later. We can now use
+the Async Serial Analyzer to convert the encoded voltage signal from
+P0.28(TX) and P0.29(RX) into plain text. <img role="img" aria-label="AsyncSerialData.png" src="AsyncSerialData.png" class="wikilink" alt="AsyncSerialData.png" /> I then copied and pasted
+this into text files so that I could use a python script to grab the
+message data and ignore the other console log messages. <embed role="img" src="ExtractPublishing.py" class="wikilink"></embed> After isolating the
+message data, the majority of this code is formatting the the data into
+a CSV. This is the same format downloaded from AWS.</p>
+<p>To analyze this data I created a second python script. This script
+reads in the CSV files from both AWS and Saleae Logic Analyzer. It uses
+dictionaries to store the messages data in a 2d array to represent the
+CSV. We then compare each item in the Saleae data array to those in the
+AWS array. There are two comparison tables, the first one has tuples in
+the form of (match, data) and the second just contains whether there was
+a match. If there is a match then the tables set a 1 for the match
+variable. This gives us two matching tables, the condensed one is great
+for getting a overview of what data was is the same, and the longer
+table allows us to understand which messages did not match between the
+<a href="Saleae" class="wikilink">Saleae Logic 4</a> and AWS. # Results
+##### Condensed Results, 1 = match 0 = no match</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr>
+<th>3.5V,100g</th>
+<th>3.5V,200g</th>
+<th>3.5V,340g</th>
+<th>3.6V,100g</th>
+<th>3.6V,200g</th>
+<th>3.6V,340g</th>
+<th>3.7V,100g</th>
+<th>3.7V,200g</th>
+<th>3.7V,340g</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>From the data above we can see that most of the data in
+the[[Saleae</td>
+<td>Saleae Logic 4]] was found in AWS however we weren’t able to find
+any matches for 3.6V with 100 grams. This is because 3.6V at 100 grams
+was the first test I did and after finishing I realized that I had
+forgot to turn on the AWS message routing rule. This means that the
+messages were received in AWS but weren’t forwarded to the DynamoDB
+table. I reran the test but forgot to save the new capture from the
+Saleae Logic 2 application. This resulted in AWS having the new messages
+for 3.6V, 100g and the old Saleae Logic 2 messages. The data supports
+this since it is the only test that wasn’t matched and the entire test
+is missing matching data.</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>From this data I am certain that there is no data manipulation
+happening in AWS. We can repeat this test to verify that the missing
+data is due to the mentioned mistake above and not any manipulation in
+AWS. This test gave us two key results. First that we can trust the data
+that has been sent to AWS, and second we now have a new way of
+collecting data from the <a href="nRF9160dk" class="wikilink">nRF9160dk</a> without needing to connect to the cloud.
+That was previously not possible because our old way of connecting to
+SWD was over a USB connection. This would also provide 5V power source
+to the <a href="nRF9160dk" class="wikilink">nRF9160dk</a>. Providing a
+5V power supply to the device would cancel out any Battery Supply
+Voltage manipulation we performed.</p>
+</body>
+</html>
