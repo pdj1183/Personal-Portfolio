@@ -20,6 +20,16 @@
   --shadow: rgba(0, 0, 0, 0.3);
 }
 
+@font-face {
+  font-family: Junicode;
+  src: url(../assets/fonts/Junicode.woff);
+}
+
+@font-face {
+  font-family: Junicode Italic;
+  src: url(../assets/fonts/Junicode-Italic.woff);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -69,7 +79,7 @@ nav {
 .logo a {
   font-size: 1.5rem;
   font-weight: bold;
-  font-family: "../assets/fonts/Junicode.ttf", serif;
+  font-family: Junicode;
   color: var(--text-primary);
 }
 
@@ -145,13 +155,13 @@ h3 {
 }
 
 .bio h1 {
-  font-family: "../assets/fonts/Junicode.ttf", serif;
+  font-family: Junicode;
   margin-bottom: 0;
   line-height: 3.5rem;
 }
 
 .bio h2 {
-  font-family: "../assets/fonts/Junicode.ttf", serif;
+  font-family: Junicode;
 }
 
 .portrait {
