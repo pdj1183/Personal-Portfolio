@@ -312,6 +312,7 @@ h3 {
 
 .project-card img {
   height: 13vh;
+  border-radius: 8px;
   float: right;
 }
 
